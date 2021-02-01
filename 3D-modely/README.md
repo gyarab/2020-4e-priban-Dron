@@ -1,1 +1,1 @@
-3D modely rámu drona
+3D modely použité při vývoji
