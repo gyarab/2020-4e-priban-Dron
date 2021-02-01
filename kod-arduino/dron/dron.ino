@@ -1,12 +1,13 @@
+//dron_04
+
 #include <Servo.h>
 #include "pid.h"
 #include "mpu.h"
 #include <Wire.h>
 
-
 mpu gyro;   // p  i  d
 //pid PID(10, 0.01, 0.1); //27.9.2020
-pid PID(15.0, 0.1, 0.5);
+pid PID(1.0, 0.0, 0.0);
 //pid PID(15.0, 0.0, 0.0);
 
 int pinA = 5;
@@ -19,49 +20,47 @@ Servo ESCB;
 Servo ESCC;
 Servo ESCD;
 
-
 #include <SoftwareSerial.h>
 SoftwareSerial bluetooth(7, 8);
 
 unsigned long start_time;
 unsigned long last_signal_time;
 
+
 float Round(float num){
   return float(int(num*10))/10;
 }
 
 void setup() {
-  Serial.begin(9600);
+
+  Serial.begin(115200);
   bluetooth.begin(19200);
+  ESCA.attach(pinA);
+  ESCB.attach(pinB);
+  ESCC.attach(pinC);
+  ESCD.attach(pinD);
+  ESCA.writeMicroseconds(2000);
+  ESCB.writeMicroseconds(2000);
+  ESCC.writeMicroseconds(2000);
+  ESCD.writeMicroseconds(2000);
+  delay(2000);
+  ESCA.writeMicroseconds(1000);
+  ESCB.writeMicroseconds(1000);
+  ESCC.writeMicroseconds(1000);
+  ESCD.writeMicroseconds(1000);
+  delay(2000);
+
   gyro.initiate();
-  ESCA.attach(pinA,1000,2000);
-  ESCB.attach(pinB,1000,2000);
-  ESCC.attach(pinC,1000,2000);
-  ESCD.attach(pinD,1000,2000);
   
-  ESCA.write(180);
-  ESCB.write(180);
-  ESCC.write(180);
-  ESCD.write(180);
-  delay(2000);
-  ESCA.write(0);
-  ESCB.write(0);
-  ESCC.write(0);
-  ESCD.write(0);
-  delay(2000);
-
-  //Serial.println("bagr");
-
-
-start_time = millis();
-last_signal_time = millis();
-
-if (bluetooth.available() > 0){
-    for (byte x = 0; x<bluetooth.available(); x++){
-      bluetooth.read();
+  start_time = millis();
+  last_signal_time = millis();
+  PID.interval_I = micros();
+  
+  if (bluetooth.available() > 0){
+      for (byte x = 0; x<bluetooth.available(); x++){
+        bluetooth.read();
+      }
     }
-  }
-
 }
 
 int strength = 0;
@@ -71,10 +70,9 @@ int max_tilt = 5;
 
 byte bytes_available;
 
-
 bool connection_started = false;
 void loop() {
-  gyro.refresh();
+  
   bytes_available = bluetooth.available();
   
   if (bytes_available > 0){//dorucene byty
@@ -112,9 +110,11 @@ void loop() {
         last_signal_time = millis();
     }
   }
+    gyro.refresh();
+    
     PID.refresh(Round(gyro.angleX)-X+Y, Round(gyro.angleY)-X-Y, gyro.Gyr_rawX, gyro.Gyr_rawY, strength);
   
-   
+    /*
     Serial.print(PID.A);
     Serial.print("  ");
     Serial.print(PID.B);
@@ -122,13 +122,13 @@ void loop() {
     Serial.print(PID.C);
     Serial.print("  ");
     Serial.println(PID.D);
-  
-    //Serial.println(Round(gyro.angleX), Round(gyro.angleY));
+    */
+    
     /*
-    ESCA.write(PID.A);
-    ESCB.write(PID.B);
-    ESCC.write(PID.C);
-    ESCD.write(PID.D);
+    ESCA.writeMicroseconds(PID.A);
+    ESCB.writeMicroseconds(PID.B);
+    ESCC.writeMicroseconds(PID.C);
+    ESCD.writeMicroseconds(PID.D);
     */
 
 }
