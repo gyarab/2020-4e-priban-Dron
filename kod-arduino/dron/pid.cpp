@@ -8,12 +8,15 @@ pid::pid(float P, float I, float D){
   d = D;
   
 }
-int maxOutput = 300;
-int maxStrength = 500;
+int maxOutput = 400;
+int maxStrength = 400;
 int endMap = 2000;
 int minValue = 1000;
-void pid::refresh(float roll_error, float pitch_error, float raw_roll, float raw_pitch, float strength){
-  
+int maxI = 150;
+
+void pid::refresh(float roll_error, float pitch_error, float raw_roll, float raw_pitch, byte raw_strength){
+  strength = map(raw_strength, 0, 255, 0, maxStrength);
+   
   if (strength == 0){
       A = minValue;
       B = minValue;
@@ -28,7 +31,12 @@ void pid::refresh(float roll_error, float pitch_error, float raw_roll, float raw
     roll_i = roll_i + ((i*roll_error*elapsed_time)/1000000.0);
     pitch_i = pitch_i + ((i*pitch_error*elapsed_time)/1000000.0);
 
-    Serial.println(roll_error, 1);
+
+    if (roll_i > maxI){roll_i = maxI;}
+    else if(roll_i < -maxI){roll_i = -maxI;}
+
+    if (pitch_i > maxI){pitch_i = maxI;}
+    else if(pitch_i < -maxI){pitch_i = -maxI;}
     
     interval_I = micros();
     if (strength < 200){
@@ -56,11 +64,20 @@ void pid::refresh(float roll_error, float pitch_error, float raw_roll, float raw
     if(B < 0){B = 0;}
     if(C < 0){C = 0;}
     if(D < 0){D = 0;}
-    
+
+    /*
     A = map(A, 0, maxOutput+maxStrength, minValue, endMap);
     B = map(B, 0, maxOutput+maxStrength, minValue, endMap);
     C = map(C, 0, maxOutput+maxStrength, minValue, endMap);
     D = map(D, 0, maxOutput+maxStrength, minValue, endMap);
+    */
+    A += 1000;
+    B += 1000;
+    C += 1000;
+    D += 1000;
+
+    
+    
   }
   
 }

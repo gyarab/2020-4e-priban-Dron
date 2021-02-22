@@ -7,7 +7,7 @@
 
 mpu gyro;   // p  i  d
 //pid PID(10, 0.01, 0.1); //27.9.2020
-pid PID(1.0, 0.0, 0.0);
+pid PID(0.0, 0.0, 0.0);
 //pid PID(15.0, 0.0, 0.0);
 
 int pinA = 5;
@@ -63,7 +63,7 @@ void setup() {
     }
 }
 
-int strength = 0;
+byte strength = 0;
 float X = 0;
 float Y = 0;
 int max_tilt = 5;
@@ -90,9 +90,10 @@ void loop() {
         start_time = 0;
     }
      if (bytes_available >= 3) {//spravne doruceni bytu
-      strength = map(bluetooth.read(), 0, 255, 0, 500);
-      X = map(bluetooth.read(), 0, 256, -max_tilt*100, max_tilt*100)/100.0;
-      Y = map(bluetooth.read(), 0, 256, -max_tilt*100, max_tilt*100)/100.0;
+      //strength = map(bluetooth.read(), 0, 255, 0, 500);
+      strength = bluetooth.read();
+      X = map(bluetooth.read(), 0, 255, -max_tilt*100, max_tilt*100)/100.0;
+      Y = map(bluetooth.read(), 0, 255, -max_tilt*100, max_tilt*100)/100.0;
       start_time = 0;
   
       if (!connection_started){
@@ -114,7 +115,7 @@ void loop() {
     
     PID.refresh(Round(gyro.angleX)-X+Y, Round(gyro.angleY)-X-Y, gyro.Gyr_rawX, gyro.Gyr_rawY, strength);
   
-    /*
+    
     Serial.print(PID.A);
     Serial.print("  ");
     Serial.print(PID.B);
@@ -122,7 +123,7 @@ void loop() {
     Serial.print(PID.C);
     Serial.print("  ");
     Serial.println(PID.D);
-    */
+    
     
     /*
     ESCA.writeMicroseconds(PID.A);

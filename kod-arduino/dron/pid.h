@@ -7,7 +7,7 @@
 class pid{
   public:
     pid(float p, float i, float d);
-    void refresh(float roll_error, float pitch_error, float raw_roll, float raw_pitch, float strength);
+    void refresh(float roll_error, float pitch_error, float raw_roll, float raw_pitch, byte raw_strength);
     int A = 0;
     int B = 0;
     int C = 0;
@@ -16,13 +16,15 @@ class pid{
     float roll = 0;
     float pitch = 0; 
 
+    float strength;
+    
     unsigned long interval_I = 0;
     unsigned long elapsed_time = 0;
   private:
-
-    
+      
     int currentXD = 0;
     int currentYD = 0;
+
     float p;
     float i;
     float d;
