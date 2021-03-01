@@ -7,8 +7,8 @@
 
 mpu gyro;   // p  i  d
 //pid PID(10, 0.01, 0.1); //27.9.2020
-pid PID(0.0, 0.0, 0.0);
-//pid PID(15.0, 0.0, 0.0);
+pid PID(7.0, 4.0, 0.6);// 28.2.2021
+//pid PID(0.0, 4.0, 0.0);
 
 int pinA = 5;
 int pinB = 3;
@@ -114,8 +114,14 @@ void loop() {
     gyro.refresh();
     
     PID.refresh(Round(gyro.angleX)-X+Y, Round(gyro.angleY)-X-Y, gyro.Gyr_rawX, gyro.Gyr_rawY, strength);
-  
+
+    /*
+    Serial.print(Round(gyro.angleX));
+    Serial.print("  ");
+    Serial.println(Round(gyro.angleY));
+    */
     
+    /*
     Serial.print(PID.A);
     Serial.print("  ");
     Serial.print(PID.B);
@@ -123,13 +129,12 @@ void loop() {
     Serial.print(PID.C);
     Serial.print("  ");
     Serial.println(PID.D);
+    */
     
     
-    /*
     ESCA.writeMicroseconds(PID.A);
     ESCB.writeMicroseconds(PID.B);
     ESCC.writeMicroseconds(PID.C);
     ESCD.writeMicroseconds(PID.D);
-    */
-
+     
 }

@@ -9,10 +9,10 @@ pid::pid(float P, float I, float D){
   
 }
 int maxOutput = 400;
-int maxStrength = 400;
+int maxStrength = 500;
 int endMap = 2000;
 int minValue = 1000;
-int maxI = 150;
+int maxI = 200;
 
 void pid::refresh(float roll_error, float pitch_error, float raw_roll, float raw_pitch, byte raw_strength){
   strength = map(raw_strength, 0, 255, 0, maxStrength);
@@ -31,15 +31,15 @@ void pid::refresh(float roll_error, float pitch_error, float raw_roll, float raw
     roll_i = roll_i + ((i*roll_error*elapsed_time)/1000000.0);
     pitch_i = pitch_i + ((i*pitch_error*elapsed_time)/1000000.0);
 
-
     if (roll_i > maxI){roll_i = maxI;}
     else if(roll_i < -maxI){roll_i = -maxI;}
 
     if (pitch_i > maxI){pitch_i = maxI;}
     else if(pitch_i < -maxI){pitch_i = -maxI;}
-    
+
+    //Serial.println(roll_error);
     interval_I = micros();
-    if (strength < 200){
+    if (strength < 70){
       roll_i = 0;
       pitch_i = 0;
     }
@@ -76,8 +76,6 @@ void pid::refresh(float roll_error, float pitch_error, float raw_roll, float raw
     C += 1000;
     D += 1000;
 
-    
-    
   }
   
 }

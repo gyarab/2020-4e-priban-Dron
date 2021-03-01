@@ -20,6 +20,8 @@ class mpu{
     int gyro_error=0;                         //We use this variable to only calculate once the gyro data error
     float Gyro_angle_x, Gyro_angle_y;         //Here we store the angle value obtained with Gyro data
 
+    float gyroFix_X = -1.1;
+    float gyroFix_Y = 1.1;
     //Acc Variables 
     int acc_error=0;                         //We use this variable to only calculate once the Acc data error
     float rad_to_deg = 180/3.141592654;      //This value is for pasing from radians to degrees values

@@ -7,17 +7,15 @@
 mpu::mpu(){
 }
 
-
-
 void mpu::initiate(){
-  //Wire.begin();
+  Wire.begin();
     //begin the wire comunication
   Wire.beginTransmission(0x68);           //begin, Send the slave adress (in this case 68)              
   Wire.write(0x6B);                       //make the reset (place a 0 into the 6B register)
   Wire.write(0x00);
   Wire.endTransmission(true);             //end the transmission
   
-  delay(100);// nezbytne, minimum 6ms, jinak probehne inicializace spatne (pouze az po resetu)
+  delay(20);// nezbytne, minimum 6ms, jinak probehne inicializace spatne (pouze az po resetu)
   //Gyro config
   Wire.beginTransmission(0x68);           //begin, Send the slave adress (in this case 68) 
   Wire.write(0x1B);                       //We want to write to the GYRO_CONFIG register (1B hex)
@@ -99,6 +97,6 @@ void mpu::refresh(){
  Acc_angle_x = (atan((Acc_rawY)/sqrt(pow((Acc_rawX),2) + pow((Acc_rawZ),2)))*rad_to_deg);
  Acc_angle_y = (atan(-1*(Acc_rawX)/sqrt(pow((Acc_rawY),2) + pow((Acc_rawZ),2)))*rad_to_deg);  
  
- angleX = 0.98 *(angleX + Gyro_angle_x) + 0.02*Acc_angle_x;
- angleY = 0.98 *(angleY + Gyro_angle_y) + 0.02*Acc_angle_y;
+ angleX = 0.98 *(angleX + Gyro_angle_x - gyroFix_X) + 0.02*Acc_angle_x + gyroFix_X;
+ angleY = 0.98 *(angleY + Gyro_angle_y - gyroFix_Y) + 0.02*Acc_angle_y + gyroFix_Y;
 }
