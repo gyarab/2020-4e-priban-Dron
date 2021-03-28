@@ -1,14 +1,14 @@
-//dron_04
+//dron_05
 
 #include <Servo.h>
 #include "pid.h"
 #include "mpu.h"
 #include <Wire.h>
 
-mpu gyro;   // p  i  d
-//pid PID(10, 0.01, 0.1); //27.9.2020
-pid PID(7.0, 4.0, 0.6);// 28.2.2021
-//pid PID(0.0, 4.0, 0.0);
+mpu gyro;
+//   Low(p    i    d) High(p    i    d)
+//pid PID(1.15, 0.003, 0.5, 7.0, 0.01, 2.1, 64);
+pid PID(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
 int pinA = 5;
 int pinB = 3;
@@ -26,7 +26,6 @@ SoftwareSerial bluetooth(7, 8);
 unsigned long start_time;
 unsigned long last_signal_time;
 
-
 float Round(float num){
   return float(int(num*10))/10;
 }
@@ -35,6 +34,7 @@ void setup() {
 
   Serial.begin(115200);
   bluetooth.begin(19200);
+  
   ESCA.attach(pinA);
   ESCB.attach(pinB);
   ESCC.attach(pinC);
@@ -71,6 +71,7 @@ int max_tilt = 5;
 byte bytes_available;
 
 bool connection_started = false;
+
 void loop() {
   
   bytes_available = bluetooth.available();
@@ -80,7 +81,7 @@ void loop() {
     if (start_time == 0){
       start_time = millis();
     }
-    if ((millis() - start_time)>200){//pokud se doruci mene, nez 3 byty behem 100ms, tak se byty zahodi a dron vypne motorky
+    if ((millis() - start_time)>200){//pokud se doruci mene, nez 3 byty behem 200ms, tak se byty zahodi a dron vypne motorky
       for (byte x = 0; x<bytes_available; x++){
         bluetooth.read();
       }
@@ -90,7 +91,6 @@ void loop() {
         start_time = 0;
     }
      if (bytes_available >= 3) {//spravne doruceni bytu
-      //strength = map(bluetooth.read(), 0, 255, 0, 500);
       strength = bluetooth.read();
       X = map(bluetooth.read(), 0, 255, -max_tilt*100, max_tilt*100)/100.0;
       Y = map(bluetooth.read(), 0, 255, -max_tilt*100, max_tilt*100)/100.0;
@@ -115,6 +115,7 @@ void loop() {
     
     PID.refresh(Round(gyro.angleX)-X+Y, Round(gyro.angleY)-X-Y, gyro.Gyr_rawX, gyro.Gyr_rawY, strength);
 
+    //uzitecne vypisy pro debuging
     /*
     Serial.print(Round(gyro.angleX));
     Serial.print("  ");
@@ -131,10 +132,8 @@ void loop() {
     Serial.println(PID.D);
     */
     
-    
     ESCA.writeMicroseconds(PID.A);
     ESCB.writeMicroseconds(PID.B);
     ESCC.writeMicroseconds(PID.C);
     ESCD.writeMicroseconds(PID.D);
-     
 }
