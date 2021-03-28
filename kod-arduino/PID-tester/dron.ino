@@ -9,7 +9,8 @@ mpu gyro;   // p  i  d
 
 //pid PID(1.5, 0.003, 0.65, 7.0, 0.01, 2.1, 64);
 //   Low(p    i    d)High(p    i    d)
-pid PID(1.15, 0.003, 0.5, 7.0, 0.01, 2.1, 64);
+//pid PID(1.15, 0.003, 0.5, 7.0, 0.01, 2.1, 64);
+pid PID(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
 int pinA = 5;
 int pinB = 3;
@@ -33,13 +34,16 @@ float Round(float num) {
 }
 
 void setup() {
-
   Serial.begin(115200);
+  //Serial.println(0);
   bluetooth.begin(19200);
+  
   ESCA.attach(pinA);
   ESCB.attach(pinB);
   ESCC.attach(pinC);
   ESCD.attach(pinD);
+  //while (!Serial.available()) {}
+  
   ESCA.writeMicroseconds(2000);
   ESCB.writeMicroseconds(2000);
   ESCC.writeMicroseconds(2000);
@@ -117,7 +121,7 @@ void loop() {
 
   PID.refresh(Round(gyro.angleX) - X + Y, Round(gyro.angleY) - X - Y, gyro.Gyr_rawX, gyro.Gyr_rawY, strength);
 
-  //Serial.println(Round(gyro.angleX));
+  Serial.println(Round(gyro.angleX));
 
   /*
     Serial.print(PID.A);

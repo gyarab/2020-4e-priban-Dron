@@ -8,7 +8,6 @@ float FloatMap(float input, float fromLow, float fromHigh, float toLow, float to
     return vraceni;
   }
   return 0.0;
-
 }
 
 pid::pid(float P_low, float I_low, float D_low, float P_high , float I_high , float D_high , byte Pid_low_map = 50){
@@ -23,12 +22,14 @@ pid::pid(float P_low, float I_low, float D_low, float P_high , float I_high , fl
   pid_low_map = Pid_low_map;
   
 }
+
 int maxOutput = 400;
 int maxStrength = 500;
 int endMap = 2000;
 int minValue = 1000;
 int maxI = 40;
 
+//vypoctene hodnoty A,B,C,D pro jednotlive motorky jsou v intervalu od 1000 do 2000. jedna se o delku pwm signalu
 void pid::refresh(float roll_error, float pitch_error, float raw_roll, float raw_pitch, byte raw_strength){
   strength = map(raw_strength, 0, 255, 0, maxStrength);
   p = FloatMap(raw_strength, pid_low_map, 255, p_low, p_high);
@@ -45,13 +46,12 @@ void pid::refresh(float roll_error, float pitch_error, float raw_roll, float raw
     roll_p = p * roll_error;
 
     elapsed_time = micros()-interval_I;
-
     roll_i = roll_i + ((i*roll_error*elapsed_time)/10000000.0);
 
     if (roll_i > maxI){roll_i = maxI;}
     else if(roll_i < -maxI){roll_i = -maxI;}
 
-    interval_I = micros();
+    interval_I = micros();//vynulovani I slozky pred skutecnym startem
     if (strength < 30){
       roll_i = 0;
     }
