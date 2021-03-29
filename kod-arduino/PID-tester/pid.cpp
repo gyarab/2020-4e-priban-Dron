@@ -1,3 +1,6 @@
+//kód inspirován:
+//https://electronoobs.com/eng_robotica_tut6.php
+
 #include "Arduino.h"
 #include "pid.h"
 #include <math.h>

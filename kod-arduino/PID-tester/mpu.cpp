@@ -1,3 +1,5 @@
+//kód inspirován:
+//http://electronoobs.com/eng_robotica_tut9_2.php
 #include "Arduino.h"
 #include "mpu.h"
 #include <Wire.h>
