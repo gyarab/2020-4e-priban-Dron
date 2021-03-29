@@ -1,4 +1,8 @@
 //dron_05
+//kód inspirován:
+//https://howtomechatronics.com/tutorials/arduino/arduino-and-hc-05-bluetooth-module-tutorial/
+//https://www.arduino.cc/en/reference/wire
+//https://www.arduino.cc/reference/en/libraries/servo/
 
 #include <Servo.h>
 #include "pid.h"
